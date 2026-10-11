@@ -1,0 +1,32 @@
+# Test and build the plugin with the brewlang repo next to it, as in development
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: obsidian-brewlang
+
+      - uses: actions/checkout@v4
+        with:
+          repository: brewlang/brewlang
+          path: brewlang
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Build brewlang
+        working-directory: brewlang
+        run: npm ci && npm run build
+
+      - name: Test and build the plugin
+        working-directory: obsidian-brewlang
+        run: npm ci && npm test && npm run build

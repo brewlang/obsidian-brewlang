@@ -1,0 +1,36 @@
+/* The card follows the Obsidian theme: its neutrals and fonts come from the theme's variables,
+   its accent and qualifier colors from brew.css, light or dark like the theme */
+
+.brewlang-block .brew-card {
+  --brew-bg: var(--background-primary);
+  --brew-ink: var(--text-normal);
+  --brew-muted: var(--text-muted);
+  --brew-faint: var(--text-faint);
+  --brew-rule: var(--background-modifier-border);
+  --brew-rule-soft: var(--background-modifier-border);
+  --brew-soft: var(--background-secondary);
+  --brew-font-body: var(--font-text);
+  --brew-font-mono: var(--font-monospace);
+  --brew-radius: var(--radius-m, 8px);
+}
+
+.theme-dark .brewlang-block .brew-card {
+  --brew-accent: oklch(0.76 0.13 45);
+  --brew-qual: oklch(0.8 0.1 155);
+  --brew-qual-line: oklch(0.45 0.06 155);
+}
+
+.brewlang-problems {
+  margin: 8px 0 0;
+  padding-left: 1.25em;
+  font-size: var(--font-ui-small);
+}
+.brewlang-problems .is-error {
+  color: var(--text-error);
+}
+.brewlang-problems .is-warning {
+  color: var(--text-warning, var(--color-orange));
+}
+.brewlang-problems .is-suggestion {
+  color: var(--text-muted);
+}

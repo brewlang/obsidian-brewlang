@@ -1,0 +1,45 @@
+# Push a tag named like the version in manifest.json (0.1.0, no 'v') to publish a release with the
+# three files Obsidian installs: main.js, manifest.json and styles.css
+name: Release
+
+on:
+  push:
+    tags: ["*"]
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: obsidian-brewlang
+
+      - uses: actions/checkout@v4
+        with:
+          repository: brewlang/brewlang
+          path: brewlang
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Build brewlang
+        working-directory: brewlang
+        run: npm ci && npm run build
+
+      - name: Test and build the plugin
+        working-directory: obsidian-brewlang
+        run: npm ci && npm test && npm run build
+
+      - name: Check the tag matches the manifest
+        working-directory: obsidian-brewlang
+        run: test "$(node -p "require('./manifest.json').version")" = "${GITHUB_REF_NAME}"
+
+      - name: Publish the release
+        working-directory: obsidian-brewlang
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release create "${GITHUB_REF_NAME}" main.js manifest.json styles.css --title "${GITHUB_REF_NAME}" --generate-notes

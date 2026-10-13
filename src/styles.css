@@ -1,5 +1,6 @@
-/* The card follows the Obsidian theme: its neutrals and fonts come from the theme's variables,
-   its accent and qualifier colors from brew.css, light or dark like the theme */
+/* The card follows the Obsidian theme: its neutrals and its mono font come from the theme's variables,
+   its qualifier colors from brew.css, light or dark like the theme; the accent is the theme's, and the
+   text is in Instrument Sans, inlined in styles.css by esbuild.config.mjs, like the playground's Sans card */
 
 .brewlang-block .brew-card {
   --brew-bg: var(--background-primary);
@@ -9,13 +10,14 @@
   --brew-rule: var(--background-modifier-border);
   --brew-rule-soft: var(--background-modifier-border);
   --brew-soft: var(--background-secondary);
-  --brew-font-body: var(--font-text);
+  --brew-font-display: "Instrument Sans", system-ui, sans-serif;
+  --brew-font-body: "Instrument Sans", system-ui, sans-serif;
   --brew-font-mono: var(--font-monospace);
   --brew-radius: var(--radius-m, 8px);
+  --brew-accent: var(--color-accent);
 }
 
 .theme-dark .brewlang-block .brew-card {
-  --brew-accent: oklch(0.76 0.13 45);
   --brew-qual: oklch(0.8 0.1 155);
   --brew-qual-line: oklch(0.45 0.06 155);
 }
@@ -33,4 +35,46 @@
 }
 .brewlang-problems .is-suggestion {
   color: var(--text-muted);
+}
+
+/* The recipe in a ```brew block, while editing: the playground's roles, in the theme's code colors */
+.brewlang-tok-brewer {
+  color: var(--code-function);
+  font-weight: 600;
+}
+.brewlang-tok-amount {
+  color: var(--code-normal);
+  font-weight: 600;
+}
+.brewlang-tok-temp {
+  color: var(--code-number);
+}
+.brewlang-tok-time {
+  color: var(--code-important);
+}
+.brewlang-tok-dur,
+.brewlang-tok-fmkey {
+  color: var(--code-property);
+}
+.brewlang-tok-qual,
+.brewlang-tok-grind,
+.brewlang-tok-fmval {
+  color: var(--code-string);
+}
+.brewlang-tok-action {
+  color: var(--code-tag);
+}
+.brewlang-tok-kw {
+  color: var(--code-keyword);
+}
+.brewlang-tok-comment {
+  color: var(--code-comment);
+  font-style: italic;
+}
+.brewlang-tok-punct {
+  color: var(--code-punctuation);
+}
+.brewlang-tok-error {
+  color: var(--text-error);
+  text-decoration: underline wavy var(--text-error);
 }

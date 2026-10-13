@@ -6,7 +6,7 @@ An Obsidian plugin for Brewlang, the `.brew` coffee recipe language: it shows ev
 
 ## Commands
 
-- `npm test` — Vitest: `tests/block.test.ts`
+- `npm test` — Vitest: `tests/block.test.ts`, `tests/settings.test.ts`, `tests/highlight.test.ts`
 - `npm run build` — `tsc --noEmit`, then esbuild: `main.js` (brewlang and @brewlang/render bundled in, `obsidian` external) and `styles.css`
 - `npm run dev` — esbuild in watch mode, with inline source maps
 
@@ -16,9 +16,13 @@ An Obsidian plugin for Brewlang, the `.brew` coffee recipe language: it shows ev
 
 ## Code
 
-- `src/block.ts` — `renderBlock(source)`: `render()` from @brewlang/render, and the diagnostics as `Line n: message`, numbered from the block's first line. Pure, so it is what the tests cover.
-- `src/main.ts` — the plugin: `registerMarkdownCodeBlockProcessor("brew", …)` puts the card in the block with `sanitizeHTMLToDom` (never `innerHTML`, per Obsidian's plugin guidelines; the HTML is escaped anyway) and lists the problems under it.
-- `src/styles.css` — maps the card's `--brew-*` variables onto the Obsidian theme (`--background-primary`, `--text-normal`, `--font-text`…); `.theme-dark` gets brew.css's dark accent and qualifier colors. `esbuild.config.mjs` writes `styles.css` as brew.css followed by this file.
+- `src/block.ts` — `renderBlock(source, options)`: `render()` from @brewlang/render, and its diagnostics and notes as `Line n: message`, numbered from the block's first line. Pure, so it is what the tests cover.
+- `src/settings.ts` — the settings (theme, accent, weight and temperature units), pure: `loadSettings` checks saved data, `cardVariables` gives the `--brew-*` variables (none for the `obsidian` theme), `renderOptions` the units for `render()`. The themes are the playground's (`playground/src/customize.ts`), same colors.
+- `src/main.ts` — the plugin: `registerMarkdownCodeBlockProcessor("brew", …)` adds a `Card` (a `MarkdownRenderChild`) that puts the card in the block with `sanitizeHTMLToDom` (never `innerHTML`, per Obsidian's plugin guidelines; the HTML is escaped anyway), sets the variables on `.brew-card`, and lists the problems under it. The plugin keeps the cards on screen and redraws them when a setting changes.
+- `src/tab.ts` — the settings tab.
+- `src/highlight.ts` — pure: `highlight(source)` gives the colored spans of a recipe, from `lex()`, with the roles of the playground's `highlight.ts`; `brewBlocks(note)` finds the recipe inside each ```` ```brew ```` fence of a note (an unclosed one runs to the end).
+- `src/editor.ts` — `brewHighlight`, the CodeMirror `ViewPlugin` registered with `registerEditorExtension`: marks `brewlang-tok-<role>` over every block, in source mode and Live Preview. `@codemirror/*` are dev dependencies for the types only, pinned to the versions `obsidian` asks for: Obsidian provides them at runtime, never bundle a second copy.
+- `src/styles.css` — sets the card in Instrument Sans (`@fontsource-variable/instrument-sans`, inlined as base64 by `esbuild.config.mjs`: a plugin loads nothing from the web) and maps the card's `--brew-*` variables onto the Obsidian theme (`--background-primary`, `--text-normal`, `--font-monospace`…); the accent is the theme's (`--color-accent`), and `.theme-dark` gets brew.css's dark qualifier colors; the `brewlang-tok-*` colors are the theme's `--code-*`. `esbuild.config.mjs` writes `styles.css` as brew.css followed by this file.
 - `main.js` and `styles.css` are build outputs, ignored by git; releases attach them.
 
 ## Releases

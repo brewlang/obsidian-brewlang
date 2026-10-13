@@ -24,6 +24,8 @@ In reading view and live preview, the block becomes a card: the title, the specs
 
 > Line 3: The scale is already at 50g: pour to a higher total, or add water with '+'
 
+While you edit a block, the recipe is colored, its problems are underlined (hover for the message), and Obsidian suggests brewers after `@`, actions after `/`, grind sizes, pour qualifiers and units as you type.
+
 The card follows your theme, light or dark. In Settings → Brewlang, pick another theme (Paper, Night, Roaster), an accent color or a size (small or medium), and show weights in g or oz and temperatures in °C or °F: only the card changes, never the recipe. For more, a [CSS snippet](https://help.obsidian.md/snippets) can set any of the card's `--brew-*` variables on `.brewlang-block .brew-card`, like the playground's "Copy CSS" gives them.
 
 [Writing recipes](https://brewlang.github.io/doc/guide/writing-recipes/) explains the format; the [playground](https://brewlang.github.io/playground/) lets you try it.

@@ -3,6 +3,7 @@ import { renderBlock } from "./block";
 import { brewHighlight } from "./editor";
 import type { BrewlangSettings } from "./settings";
 import { cardStyle, loadSettings, renderOptions } from "./settings";
+import { BrewSuggest } from "./suggest";
 import { BrewlangSettingTab } from "./tab";
 
 /// A card shown in a note, kept while the note shows it so a change of settings can redraw it
@@ -42,7 +43,7 @@ class Card extends MarkdownRenderChild {
 }
 
 /** Shows every ```brew code block of a note as a recipe card, styled and converted as the settings say,
- *  and colors the recipe while editing it. */
+ *  and colors, checks and completes the recipe while editing it. */
 export default class BrewlangPlugin extends Plugin {
   settings!: BrewlangSettings;
   readonly cards = new Set<Card>();
@@ -51,6 +52,7 @@ export default class BrewlangPlugin extends Plugin {
     this.settings = loadSettings(await this.loadData());
     this.addSettingTab(new BrewlangSettingTab(this.app, this));
     this.registerEditorExtension(brewHighlight);
+    this.registerEditorSuggest(new BrewSuggest(this.app));
     this.registerMarkdownCodeBlockProcessor("brew", (source, el, ctx) => {
       ctx.addChild(new Card(el, source, this));
     });

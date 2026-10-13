@@ -78,3 +78,21 @@
   color: var(--text-error);
   text-decoration: underline wavy var(--text-error);
 }
+
+/* The problems in a ```brew block, while editing: the word underlined, the message on hover */
+.brewlang-lint {
+  text-decoration-line: underline;
+  text-decoration-style: wavy;
+  text-decoration-skip-ink: none;
+  text-underline-offset: 3px;
+}
+.brewlang-lint-error {
+  text-decoration-color: var(--text-error);
+}
+.brewlang-lint-warning {
+  text-decoration-color: var(--text-warning, var(--color-orange));
+}
+.brewlang-lint-suggestion {
+  text-decoration-style: dotted;
+  text-decoration-color: var(--text-muted);
+}

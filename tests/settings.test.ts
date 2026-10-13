@@ -1,6 +1,6 @@
 import { describe, expect, test } from "vitest";
 import { renderBlock } from "../src/block";
-import { cardVariables, DEFAULT_SETTINGS, loadSettings, renderOptions } from "../src/settings";
+import { cardStyle, DEFAULT_SETTINGS, loadSettings, renderOptions } from "../src/settings";
 
 describe("loadSettings", () => {
   test("nothing saved gives the default", () => {
@@ -8,9 +8,10 @@ describe("loadSettings", () => {
   });
 
   test("known values are kept, unknown ones fall back to the default", () => {
-    expect(loadSettings({ theme: "roaster", accent: "#AA3300", weight: "oz", temp: "kelvin" })).toEqual({
+    expect(loadSettings({ theme: "roaster", accent: "#AA3300", size: "small", weight: "oz", temp: "kelvin" })).toEqual({
       theme: "roaster",
       accent: "#aa3300",
+      size: "small",
       weight: "oz",
       temp: "written",
     });
@@ -18,15 +19,19 @@ describe("loadSettings", () => {
   });
 });
 
-describe("cardVariables", () => {
+describe("cardStyle", () => {
   test("the default sets nothing, so the card follows the Obsidian theme", () => {
-    expect(cardVariables(DEFAULT_SETTINGS)).toEqual({});
+    expect(cardStyle(DEFAULT_SETTINGS)).toEqual({});
   });
 
   test("a theme sets its whole palette, and the accent goes over it", () => {
-    const vars = cardVariables({ ...DEFAULT_SETTINGS, theme: "night", accent: "#123456" });
+    const vars = cardStyle({ ...DEFAULT_SETTINGS, theme: "night", accent: "#123456" });
     expect(vars["--brew-bg"]).toBe("oklch(0.225 0 0)");
     expect(vars["--brew-accent"]).toBe("#123456");
+  });
+
+  test("the small size zooms the card out", () => {
+    expect(cardStyle({ ...DEFAULT_SETTINGS, size: "small" })).toEqual({ zoom: "0.85" });
   });
 });
 

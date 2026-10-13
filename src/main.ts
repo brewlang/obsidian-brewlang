@@ -2,7 +2,7 @@ import { MarkdownRenderChild, Plugin, sanitizeHTMLToDom } from "obsidian";
 import { renderBlock } from "./block";
 import { brewHighlight } from "./editor";
 import type { BrewlangSettings } from "./settings";
-import { cardVariables, loadSettings, renderOptions } from "./settings";
+import { cardStyle, loadSettings, renderOptions } from "./settings";
 import { BrewlangSettingTab } from "./tab";
 
 /// A card shown in a note, kept while the note shows it so a change of settings can redraw it
@@ -33,7 +33,7 @@ class Card extends MarkdownRenderChild {
     el.appendChild(sanitizeHTMLToDom(html));
 
     const card = el.querySelector<HTMLElement>(".brew-card");
-    for (const [name, value] of Object.entries(cardVariables(settings))) card?.style.setProperty(name, value);
+    for (const [name, value] of Object.entries(cardStyle(settings))) card?.style.setProperty(name, value);
 
     if (problems.length === 0) return;
     const list = el.createEl("ul", { cls: "brewlang-problems" });

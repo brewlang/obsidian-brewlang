@@ -1,18 +1,26 @@
 import type { RenderOptions } from "@brewlang/render";
 
 export type ThemeName = "obsidian" | "paper" | "night" | "roaster";
+export type CardSize = "small" | "medium";
 
 /** What the reader can change about the cards: their look and the units they show. */
 export interface BrewlangSettings {
   theme: ThemeName;
   /** A '#rrggbb' color, or empty for the theme's. */
   accent: string;
+  size: CardSize;
   /** 'written': as the author wrote it. */
   weight: "written" | "g" | "oz";
   temp: "written" | "°C" | "°F";
 }
 
-export const DEFAULT_SETTINGS: BrewlangSettings = { theme: "obsidian", accent: "", weight: "written", temp: "written" };
+export const DEFAULT_SETTINGS: BrewlangSettings = {
+  theme: "obsidian",
+  accent: "",
+  size: "medium",
+  weight: "written",
+  temp: "written",
+};
 
 /// Every color of a card, as brew.css names them without the '--brew-' prefix
 type Palette = Record<"bg" | "ink" | "muted" | "faint" | "rule" | "rule-soft" | "soft" | "accent" | "qual" | "qual-line", string>;
@@ -66,6 +74,13 @@ export const THEMES: Record<Exclude<ThemeName, "obsidian">, { label: string; pal
   },
 };
 
+/** How much each size scales the whole card, text and spacing alike. No larger size: Obsidian cuts a
+ *  zoomed-in card at the height it measured. */
+export const SIZES: Record<CardSize, { label: string; zoom: number }> = {
+  small: { label: "Small", zoom: 0.85 },
+  medium: { label: "Medium", zoom: 1 },
+};
+
 const HEX = /^#[0-9a-f]{6}$/i;
 
 /// Picks a value among the allowed ones, else the default
@@ -78,18 +93,21 @@ export function loadSettings(data: unknown): BrewlangSettings {
   return {
     theme: oneOf(saved.theme, ["obsidian", "paper", "night", "roaster"], DEFAULT_SETTINGS.theme),
     accent: typeof saved.accent === "string" && HEX.test(saved.accent) ? saved.accent.toLowerCase() : "",
+    size: oneOf(saved.size, ["small", "medium"], DEFAULT_SETTINGS.size),
     weight: oneOf(saved.weight, ["written", "g", "oz"], DEFAULT_SETTINGS.weight),
     temp: oneOf(saved.temp, ["written", "°C", "°F"], DEFAULT_SETTINGS.temp),
   };
 }
 
-/** The --brew-* variables to set on a card; none for the default, so the card follows the Obsidian theme. */
-export function cardVariables(settings: BrewlangSettings): Record<string, string> {
+/** The CSS properties to set on a card: the --brew-* variables and its zoom. None for the default, so the
+ *  card follows the Obsidian theme. */
+export function cardStyle(settings: BrewlangSettings): Record<string, string> {
   const vars: Record<string, string> = {};
   if (settings.theme !== "obsidian") {
     for (const [name, value] of Object.entries(THEMES[settings.theme].palette)) vars[`--brew-${name}`] = value;
   }
   if (settings.accent) vars["--brew-accent"] = settings.accent;
+  if (settings.size !== "medium") vars.zoom = String(SIZES[settings.size].zoom);
   return vars;
 }
 

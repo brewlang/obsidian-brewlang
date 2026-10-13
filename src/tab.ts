@@ -1,10 +1,10 @@
 import type { App } from "obsidian";
 import { PluginSettingTab, Setting } from "obsidian";
 import type BrewlangPlugin from "./main";
-import type { BrewlangSettings, ThemeName } from "./settings";
-import { THEMES } from "./settings";
+import type { BrewlangSettings, CardSize, ThemeName } from "./settings";
+import { SIZES, THEMES } from "./settings";
 
-/** The settings: the cards' theme and accent, and the units they show. */
+/** The settings: the cards' theme, accent and size, and the units they show. */
 export class BrewlangSettingTab extends PluginSettingTab {
   constructor(
     app: App,
@@ -44,6 +44,14 @@ export class BrewlangSettingTab extends PluginSettingTab {
             this.display();
           }),
       );
+
+    new Setting(containerEl)
+      .setName("Size")
+      .setDesc("Scales the whole card, text and spacing alike.")
+      .addDropdown((dropdown) => {
+        for (const [name, { label }] of Object.entries(SIZES)) dropdown.addOption(name, label);
+        dropdown.setValue(settings.size).onChange((value) => this.plugin.updateSettings({ size: value as CardSize }));
+      });
 
     new Setting(containerEl).setName("Units").setHeading();
 

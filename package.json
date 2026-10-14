@@ -1,6 +1,6 @@
 {
   "name": "obsidian-brewlang",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "description": "Obsidian plugin: show ```brew code blocks as coffee recipe cards",
   "type": "module",

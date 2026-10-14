@@ -2,9 +2,12 @@ import type { RenderOptions } from "@brewlang/render";
 
 export type ThemeName = "obsidian" | "paper" | "night" | "roaster";
 export type CardSize = "small" | "medium";
+/** What a ```brew block shows in reading view. */
+export type Display = "card" | "code" | "both";
 
 /** What the reader can change about the cards: their look and the units they show. */
 export interface BrewlangSettings {
+  display: Display;
   theme: ThemeName;
   /** A '#rrggbb' color, or empty for the theme's. */
   accent: string;
@@ -15,6 +18,7 @@ export interface BrewlangSettings {
 }
 
 export const DEFAULT_SETTINGS: BrewlangSettings = {
+  display: "card",
   theme: "obsidian",
   accent: "",
   size: "medium",
@@ -76,6 +80,13 @@ export const THEMES: Record<Exclude<ThemeName, "obsidian">, { label: string; pal
 
 /** How much each size scales the whole card, text and spacing alike. No larger size: Obsidian cuts a
  *  zoomed-in card at the height it measured. */
+/** The choices of what a block shows, for the settings tab. */
+export const DISPLAYS: Record<Display, string> = {
+  card: "Card",
+  code: "Code",
+  both: "Code and card",
+};
+
 export const SIZES: Record<CardSize, { label: string; zoom: number }> = {
   small: { label: "Small", zoom: 0.85 },
   medium: { label: "Medium", zoom: 1 },
@@ -91,6 +102,7 @@ const oneOf = <T extends string>(value: unknown, allowed: readonly T[], fallback
 export function loadSettings(data: unknown): BrewlangSettings {
   const saved = (typeof data === "object" && data !== null ? data : {}) as Record<string, unknown>;
   return {
+    display: oneOf(saved.display, ["card", "code", "both"], DEFAULT_SETTINGS.display),
     theme: oneOf(saved.theme, ["obsidian", "paper", "night", "roaster"], DEFAULT_SETTINGS.theme),
     accent: typeof saved.accent === "string" && HEX.test(saved.accent) ? saved.accent.toLowerCase() : "",
     size: oneOf(saved.size, ["small", "medium"], DEFAULT_SETTINGS.size),

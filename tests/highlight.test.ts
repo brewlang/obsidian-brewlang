@@ -1,5 +1,5 @@
 import { describe, expect, test } from "vitest";
-import { brewBlocks, highlight } from "../src/highlight";
+import { brewBlocks, highlight, pieces } from "../src/highlight";
 
 /// The spans as 'text:role', easier to read than offsets
 const roles = (source: string) => highlight(source).map((s) => `${source.slice(s.from, s.to)}:${s.role}`);
@@ -32,6 +32,23 @@ describe("highlight", () => {
       "15g:amount",
     ]);
   });
+});
+
+describe("pieces", () => {
+    test("the colored words and the plain text between them give back the whole recipe", () => {
+        const source = "@V60 15g 250g\n0:00 50g bloom -- wet it all\n";
+        const parts = pieces(source);
+        expect(parts.map((p) => p.text).join("")).toBe(source);
+        expect(parts.filter((p) => p.role).map((p) => `${p.text}:${p.role}`)).toEqual([
+            "@V60:brewer",
+            "15g:amount",
+            "250g:amount",
+            "0:00:time",
+            "50g:amount",
+            "bloom:qual",
+            "-- wet it all:comment",
+        ]);
+    });
 });
 
 describe("brewBlocks", () => {

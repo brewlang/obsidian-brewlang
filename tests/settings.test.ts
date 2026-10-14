@@ -8,14 +8,15 @@ describe("loadSettings", () => {
   });
 
   test("known values are kept, unknown ones fall back to the default", () => {
-    expect(loadSettings({ theme: "roaster", accent: "#AA3300", size: "small", weight: "oz", temp: "kelvin" })).toEqual({
+    expect(loadSettings({ display: "code", theme: "roaster", accent: "#AA3300", size: "small", weight: "oz", temp: "kelvin" })).toEqual({
+      display: "code",
       theme: "roaster",
       accent: "#aa3300",
       size: "small",
       weight: "oz",
       temp: "written",
     });
-    expect(loadSettings({ theme: "neon", accent: "red" })).toEqual(DEFAULT_SETTINGS);
+    expect(loadSettings({ display: "image", theme: "neon", accent: "red" })).toEqual(DEFAULT_SETTINGS);
   });
 });
 

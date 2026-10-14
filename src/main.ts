@@ -1,6 +1,7 @@
 import { MarkdownRenderChild, Plugin, sanitizeHTMLToDom } from "obsidian";
 import { renderBlock } from "./block";
 import { brewHighlight } from "./editor";
+import { pieces } from "./highlight";
 import type { BrewlangSettings } from "./settings";
 import { cardStyle, loadSettings, renderOptions } from "./settings";
 import { BrewSuggest } from "./suggest";
@@ -31,10 +32,21 @@ class Card extends MarkdownRenderChild {
     const el = this.containerEl;
     el.empty();
     el.addClass("brewlang-block");
-    el.appendChild(sanitizeHTMLToDom(html));
 
-    const card = el.querySelector<HTMLElement>(".brew-card");
-    for (const [name, value] of Object.entries(cardStyle(settings))) card?.style.setProperty(name, value);
+    // The recipe as written, colored like the editor: text nodes and spans, no HTML to parse
+    if (settings.display !== "card") {
+      const code = el.createEl("pre", { cls: "brewlang-code" }).createEl("code");
+      for (const { text, role } of pieces(this.source.replace(/\n$/, ""))) {
+        if (role) code.createSpan({ cls: `brewlang-tok-${role}`, text });
+        else code.appendText(text);
+      }
+    }
+
+    if (settings.display !== "code") {
+      el.appendChild(sanitizeHTMLToDom(html));
+      const card = el.querySelector<HTMLElement>(".brew-card");
+      for (const [name, value] of Object.entries(cardStyle(settings))) card?.style.setProperty(name, value);
+    }
 
     if (problems.length === 0) return;
     const list = el.createEl("ul", { cls: "brewlang-problems" });
@@ -42,7 +54,7 @@ class Card extends MarkdownRenderChild {
   }
 }
 
-/** Shows every ```brew code block of a note as a recipe card, styled and converted as the settings say,
+/** Shows every ```brew code block of a note as a recipe card, its colored code or both, as the settings say,
  *  and colors, checks and completes the recipe while editing it. */
 export default class BrewlangPlugin extends Plugin {
   settings!: BrewlangSettings;

@@ -22,6 +22,14 @@
   --brew-qual-line: oklch(0.45 0.06 155);
 }
 
+/* The recipe as code, in reading view: Obsidian's own code block look; a card under it keeps its distance */
+.brewlang-code {
+  white-space: pre-wrap;
+}
+.brewlang-code + .brew-card {
+  margin-top: 12px;
+}
+
 .brewlang-problems {
   margin: 8px 0 0;
   padding-left: 1.25em;

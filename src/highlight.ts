@@ -107,6 +107,19 @@ export function highlight(source: string): Span[] {
   return spans;
 }
 
+/** A recipe cut into its colored and plain stretches, in order, to show it as code. */
+export function pieces(source: string): { text: string; role?: Role }[] {
+  const out: { text: string; role?: Role }[] = [];
+  let at = 0;
+  for (const { from, to, role } of highlight(source)) {
+    if (from > at) out.push({ text: source.slice(at, from) });
+    out.push({ text: source.slice(from, to), role });
+    at = to;
+  }
+  if (at < source.length) out.push({ text: source.slice(at) });
+  return out;
+}
+
 /** The ```brew blocks of a note: where the recipe inside each starts and ends, fences excluded. */
 export function brewBlocks(note: string): { from: number; to: number }[] {
   const blocks: { from: number; to: number }[] = [];

@@ -1,10 +1,10 @@
 import type { App } from "obsidian";
 import { PluginSettingTab, Setting } from "obsidian";
 import type BrewlangPlugin from "./main";
-import type { BrewlangSettings, CardSize, ThemeName } from "./settings";
-import { SIZES, THEMES } from "./settings";
+import type { BrewlangSettings, CardSize, Display, ThemeName } from "./settings";
+import { DISPLAYS, SIZES, THEMES } from "./settings";
 
-/** The settings: the cards' theme, accent and size, and the units they show. */
+/** The settings: what a block shows, the cards' theme, accent and size, and the units they show. */
 export class BrewlangSettingTab extends PluginSettingTab {
   constructor(
     app: App,
@@ -17,6 +17,16 @@ export class BrewlangSettingTab extends PluginSettingTab {
     const { containerEl } = this;
     const { settings } = this.plugin;
     containerEl.empty();
+
+    new Setting(containerEl)
+      .setName("Display")
+      .setDesc("What a brew code block shows in reading view. The problems are listed under it either way.")
+      .addDropdown((dropdown) =>
+        dropdown
+          .addOptions(DISPLAYS)
+          .setValue(settings.display)
+          .onChange((value) => this.plugin.updateSettings({ display: value as Display })),
+      );
 
     new Setting(containerEl).setName("Card").setHeading();
 
